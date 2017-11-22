@@ -5,6 +5,9 @@ FROM php:7.1-apache
 RUN apt-get update && apt-get install -y \  
       libicu-dev \
       libpq-dev \
+      libfreetype6-dev \
+      libjpeg62-turbo-dev \
+      libpng12-dev \
       libmcrypt-dev \
       git \
       zip \
