@@ -1,5 +1,5 @@
 #start with our base image (the foundation) - version 7.1.5
-FROM php:7.1.5-apache
+FROM php:7.1-apache
 
 #install all the system dependencies and enable PHP modules 
 RUN apt-get update && apt-get install -y \  
@@ -9,22 +9,22 @@ RUN apt-get update && apt-get install -y \
       git \
       zip \
       unzip \
+      mysql-client \
     && rm -r /var/lib/apt/lists/* \
-    && NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
     && docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd \
     && docker-php-ext-install pdo_mysql \
-    && docker-php-ext-configure mysql --with-mysql=mysqlnd \
-    && docker-php-ext-install mysql \
-    && docker-php-ext-configure mysqli --with-mysqli=mysqlnd \
-    && docker-php-ext-install mysqli \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-png-dir=/usr/include/ --with-jpeg-dir=/usr/lib \
-    && docker-php-ext-install -j${NPROC} gd \
+    #&& docker-php-ext-configure mysql --with-mysql=mysqlnd \
+    #&& docker-php-ext-install mysql \
+    #&& docker-php-ext-configure mysqli --with-mysqli=mysqlnd \
+    #&& docker-php-ext-install mysqli \
+    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-png-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-install gd \
     && docker-php-ext-install \
       intl \
       mbstring \
       mcrypt \
       pcntl \
-      pdo_mysql \
+#      pdo_mysql \
 #      pdo_pgsql \
 #      pgsql \
       zip \
@@ -44,9 +44,6 @@ RUN sed -i -e "s/html/html\/public/g" /etc/apache2/sites-enabled/000-default.con
 
 # enable apache module rewrite
 RUN a2enmod rewrite
-
-#copy source files and run composer
-COPY . $APP_HOME
 
 #change ownership of our applications
 RUN chown -R www-data:www-data $APP_HOME
